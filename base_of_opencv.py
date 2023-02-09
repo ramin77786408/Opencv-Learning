@@ -38,24 +38,75 @@ def Start():
 # Draw a line
     cv.line(resize_img,start_point, end_point, color, tickness)
 
-#draw a circle
+# draw a circle
     cv.circle(resize_img,center,radius, color, tickness)
 
-#draw a rectangle
+# draw a rectangle
     cv.rectangle(resize_img,start_point,end_point,color,tickness)
 
-#draw ellipse
+# draw ellipse
     cv.ellipse(resize_img,center,axeslength, angle, startangle, endangle,color,-1)   #tickness = -1  fill ellipse
     cv.imshow('resize img', resize_img)
 
+# image in multiple format
+    img = cv.imread('test.png', 0)      # -1 = original  0 = gray
+    cv.imshow('original image', img)
+
+# capture video from webcam
+    video = cv.VideoCapture(0)                  # read from webcam
+    while(True):
+        ret, frame = video.read()               # read from webcam to frame
+        cv.imshow("video", frame)               # show video
+        if cv.waitKey(1) & 0xFF == ord('q'):    # This is for waiting program until a 'q' key press
+            break
+            video.release()
+
+# capture from from webcam to file
+    file = cv.VideoCapture(0)
+    if(file.isOpened() == False):               # check the cam is open
+        print ("Camera could not Open")
+
+    frame_width = int(file.get(3))              # video dimention
+    frame_height = int(file.get(4))             # video dimention
+
+    # video coded    encoder decoders
+    video_cod =cv.VideoWriter_fourcc(*'XVID')
+    video_output= cv.VideoWriter('capture_video.MP4', video_cod, 30, (frame_width, frame_height))
+
+    while (True):
+        ret, frame =file.read()
+        if ret ==True:
+            video_output.write(frame)           # write video to file
+            cv.imshow('frame', frame)
+            if cv.waitKey(1) & 0xFF == ord('q'):
+                break
+        else:
+            break
+    file.release()
+    video_output.release()
 
 
-    cv.waitKey(0)  # This is for waiting program until a key press
-    cv.destroyAllWindows()  # this command destroy all windows
+
+    print("this video was saved successfully")
+
+# read video from file
+    cap = cv.VideoCapture('capture_video.MP4')   # read from file
+    while (True):
+        ret, frame1 =cap.read()
+        cv.imshow("from file", frame1)
+        if cv.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+
+
+
+    cv.waitKey(0)                               # This is for waiting program until a key press
+    cv.destroyAllWindows()                      # this command destroy all windows
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     Start()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
